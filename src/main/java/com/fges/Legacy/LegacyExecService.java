@@ -16,6 +16,8 @@ import static com.fges.Main.OBJECT_MAPPER;
 public class LegacyExecService {
 
     public static int exec(String[] args) throws IOException {
+
+
         // Setup CLI interface
         Options cliOptions = new Options();
         CommandLineParser parser = new DefaultParser();
