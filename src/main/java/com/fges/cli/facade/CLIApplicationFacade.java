@@ -22,7 +22,13 @@ public class CLIApplicationFacade {
 
             GroceryListServiceImpl groceryService = builder.buildService();
 
-            List<String> positionalArgs = List.of(args).subList(1, args.length);
+            // Récupérer uniquement les arguments non-optionnels après parsing
+            String[] remainingArgs = builder.getParsedArgs();
+            List<String> positionalArgs = List.of(remainingArgs);
+
+            // Debugging: Vérifier ce que l'on envoie au controller
+            System.out.println("Arguments finaux envoyés au controller: " + positionalArgs);
+
             CLICommandController controller = new CLICommandController(groceryService, positionalArgs);
 
             return controller.executeCommand();
