@@ -1,7 +1,7 @@
 package com.fges;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fges.Legacy.LegacyExecService;
+import com.fges.cli.facade.CLIApplicationFacade;
 
 import java.io.IOException;
 
@@ -14,6 +14,6 @@ public class Main {
     }
 
     public static int exec(String[] args) throws IOException {
-        return LegacyExecService.exec(args);
+        return new CLIApplicationFacade(args).run();
     }
 }
