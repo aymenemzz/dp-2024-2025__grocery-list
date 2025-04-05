@@ -1,15 +1,15 @@
 package com.fges.factory;
 
-import com.fges.storage.CsvStorage;
-import com.fges.storage.JsonStorage;
-import com.fges.storage.strategy.StorageStrategy;
+import com.fges.storage.CsvStorageDAO;
+import com.fges.storage.JsonStorageDAO;
+import com.fges.storage.dao.GenericDAO;
 
 public class StorageFactory {
 
-    public static StorageStrategy getStorage(String type, String filename) {
+    public static GenericDAO getStorage(String type, String filename) {
         return switch (type.toLowerCase()) {
-            case "csv" -> new CsvStorage(filename);
-            case "json" -> new JsonStorage(filename);
+            case "csv" -> new CsvStorageDAO(filename);
+            case "json" -> new JsonStorageDAO(filename);
             default -> throw new IllegalArgumentException("Type de stockage non supporté: " + type);
         };
     }

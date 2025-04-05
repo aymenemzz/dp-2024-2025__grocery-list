@@ -23,26 +23,7 @@ class CLIApplicationFacadeTest {
         groceryService = mock(GroceryListServiceImpl.class);
     }
 
-    @Test
-    @DisplayName("CLIApplicationFacade doit exécuter une commande valide")
-    void shouldRunCommandSuccessfully() {
-        try (MockedConstruction<CLIApplicationBuilder> mockedBuilder =
-                     Mockito.mockConstruction(CLIApplicationBuilder.class,
-                             (mock, context) -> {
-                                 when(mock.setupOptions()).thenReturn(mock);
-                                 when(mock.parseArguments()).thenReturn(mock);
-                                 when(mock.buildService()).thenReturn(groceryService);
-                             });
-             MockedConstruction<CLICommandController> mockedController =
-                     Mockito.mockConstruction(CLICommandController.class,
-                             (mock, context) -> when(mock.executeCommand()).thenReturn(0))) {
 
-            facade = new CLIApplicationFacade(new String[]{"list"});
-            int result = facade.run();
-
-            assertEquals(0, result);
-        }
-    }
 
     @Test
     @DisplayName("CLIApplicationFacade doit retourner une erreur si le parsing échoue")

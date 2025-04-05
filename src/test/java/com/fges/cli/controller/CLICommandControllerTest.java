@@ -26,7 +26,8 @@ class CLICommandControllerTest {
     @DisplayName("CLICommandController doit exécuter une commande valide")
     void shouldExecuteValidCommand() {
         List<String> args = List.of("add", "Pomme", "3");
-        controller = new CLICommandController(groceryService, args);
+        String category = "Fruits";
+        controller = new CLICommandController(groceryService, args, category);
 
         // Création du mock de la commande
         Command mockCommand = mock(Command.class);
@@ -34,7 +35,7 @@ class CLICommandControllerTest {
 
         // Utilisation de MockedStatic pour moquer la méthode statique CommandFactory.getCommand()
         try (MockedStatic<CommandFactory> mockedFactory = mockStatic(CommandFactory.class)) {
-            mockedFactory.when(() -> CommandFactory.getCommand("add", groceryService, List.of("Pomme", "3")))
+            mockedFactory.when(() -> CommandFactory.getCommand("add", groceryService, List.of("Pomme", "3"), "fruits"))
                     .thenReturn(mockCommand);
 
             int result = controller.executeCommand();
@@ -47,10 +48,11 @@ class CLICommandControllerTest {
     @DisplayName("CLICommandController doit retourner une erreur si la commande est inconnue")
     void shouldReturnErrorForUnknownCommand() {
         List<String> args = List.of("unknownCommand");
-        controller = new CLICommandController(groceryService, args);
+        String category = "Fruits";
+        controller = new CLICommandController(groceryService, args, category);
 
         try (MockedStatic<CommandFactory> mockedFactory = mockStatic(CommandFactory.class)) {
-            mockedFactory.when(() -> CommandFactory.getCommand("unknownCommand", groceryService, List.of()))
+            mockedFactory.when(() -> CommandFactory.getCommand("unknownCommand", groceryService, List.of(), "fruits"))
                     .thenThrow(new IllegalArgumentException("Commande inconnue"));
 
             int result = controller.executeCommand();
@@ -63,7 +65,8 @@ class CLICommandControllerTest {
     @DisplayName("CLICommandController doit retourner une erreur si aucune commande n'est fournie")
     void shouldReturnErrorForEmptyCommand() {
         List<String> args = List.of();
-        controller = new CLICommandController(groceryService, args);
+        String category = "Fruits";
+        controller = new CLICommandController(groceryService, args, category);
 
         int result = controller.executeCommand();
 

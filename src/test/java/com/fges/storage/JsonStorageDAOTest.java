@@ -11,13 +11,13 @@ import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class JsonStorageTest {
+class JsonStorageDAOTest {
     private static final String TEST_FILE = "test_storage.json";
-    private JsonStorage jsonStorage;
+    private JsonStorageDAO jsonStorageDAO;
 
     @BeforeEach
     void setUp() {
-        jsonStorage = new JsonStorage(TEST_FILE);
+        jsonStorageDAO = new JsonStorageDAO(TEST_FILE);
     }
 
     @AfterEach
@@ -34,16 +34,16 @@ class JsonStorageTest {
     @Test
     @DisplayName("Le chemin du fichier doit être correct")
     void shouldReturnCorrectPath() {
-        assertEquals(Path.of(TEST_FILE), jsonStorage.getStoragePath());
+        assertEquals(Path.of(TEST_FILE), jsonStorageDAO.getStoragePath());
     }
 
     @Test
     @DisplayName("Exception levée si le nom du fichier est null ou vide")
     void shouldThrowExceptionWhenFilenameIsInvalid() {
-        Exception exception1 = assertThrows(IllegalArgumentException.class, () -> new JsonStorage(null));
+        Exception exception1 = assertThrows(IllegalArgumentException.class, () -> new JsonStorageDAO(null));
         assertEquals("Le nom du fichier ne peut pas être nul ou vide.", exception1.getMessage());
 
-        Exception exception2 = assertThrows(IllegalArgumentException.class, () -> new JsonStorage(""));
+        Exception exception2 = assertThrows(IllegalArgumentException.class, () -> new JsonStorageDAO(""));
         assertEquals("Le nom du fichier ne peut pas être nul ou vide.", exception2.getMessage());
     }
 }

@@ -1,10 +1,10 @@
-package com.fges.storage.strategy;
+package com.fges.storage.dao;
 
 import com.fges.valueobject.Item;
 
 import java.util.List;
 
-public interface StorageStrategy {
+public interface GenericDAO {
     void addItem(Item item);
     void addItemList(List<Item> itemList);
     List<Item> loadAllItem();

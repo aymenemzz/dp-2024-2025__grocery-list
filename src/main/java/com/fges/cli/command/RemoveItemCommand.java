@@ -14,7 +14,7 @@ public class RemoveItemCommand implements Command {
 
     @Override
     public int execute() {
-        service.deleteItem(new Item(itemName, 0));
+        service.deleteItem(new Item(itemName, 0, "default"));
         return 0;
     }
 }

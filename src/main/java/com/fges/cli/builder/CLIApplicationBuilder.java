@@ -17,6 +17,7 @@ public class CLIApplicationBuilder {
     public CLIApplicationBuilder setupOptions() {
         cliOptions.addRequiredOption("s", "source", true, "File containing the grocery list");
         cliOptions.addOption("f", "format", true, "Storage format: csv or json (default: json)");
+        cliOptions.addOption("c", "category",true, "Category of element, by default the categoy is 'default'");
         return this;
     }
 
@@ -39,5 +40,9 @@ public class CLIApplicationBuilder {
         }
 
         return GroceryAppFactory.createGroceryApp(format, fileName);
+    }
+
+    public String getCategory() {
+        return cmd.hasOption("c") ? cmd.getOptionValue("c") : "default";
     }
 }

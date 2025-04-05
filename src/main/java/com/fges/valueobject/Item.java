@@ -12,4 +12,5 @@ import lombok.Setter;
 public class Item {
     private String name;
     private Integer quantity;
+    private String category;
 }

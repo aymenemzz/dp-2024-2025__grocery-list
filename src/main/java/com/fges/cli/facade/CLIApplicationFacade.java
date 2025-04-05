@@ -27,10 +27,9 @@ public class CLIApplicationFacade {
             List<String> positionalArgs = List.of(remainingArgs);
 
             // Debugging: Vérifier ce que l'on envoie au controller
-            System.out.println("Arguments finaux envoyés au controller: " + positionalArgs);
+            System.err.println("Arguments finaux envoyés au controller: " + positionalArgs);
 
-            CLICommandController controller = new CLICommandController(groceryService, positionalArgs);
-
+            CLICommandController controller = new CLICommandController(groceryService, positionalArgs, builder.getCategory());
             return controller.executeCommand();
 
         } catch (ParseException e) {
