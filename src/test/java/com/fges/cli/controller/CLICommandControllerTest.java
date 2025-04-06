@@ -33,9 +33,8 @@ class CLICommandControllerTest {
         Command mockCommand = mock(Command.class);
         when(mockCommand.execute()).thenReturn(0);
 
-        // Utilisation de MockedStatic pour moquer la méthode statique CommandFactory.getCommand()
         try (MockedStatic<CommandFactory> mockedFactory = mockStatic(CommandFactory.class)) {
-            mockedFactory.when(() -> CommandFactory.getCommand("add", groceryService, List.of("Pomme", "3"), "fruits"))
+            mockedFactory.when(() -> CommandFactory.getCommand("add", groceryService, List.of("Pomme", "3"), "Fruits"))
                     .thenReturn(mockCommand);
 
             int result = controller.executeCommand();
@@ -44,6 +43,7 @@ class CLICommandControllerTest {
             verify(mockCommand, times(1)).execute();
         }
     }
+
     @Test
     @DisplayName("CLICommandController doit retourner une erreur si la commande est inconnue")
     void shouldReturnErrorForUnknownCommand() {
