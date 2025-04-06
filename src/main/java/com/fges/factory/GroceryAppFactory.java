@@ -1,15 +1,12 @@
 package com.fges.factory;
 
-import com.fges.dao.GroceryDAO;
 import com.fges.serviceimpl.GroceryListServiceImpl;
-import com.fges.storage.JsonStorage;
-import lombok.NoArgsConstructor;
+import com.fges.storage.dao.GenericDAO;
 
-@NoArgsConstructor
+
 public class GroceryAppFactory {
-    public static GroceryListServiceImpl createGroceryApp(String fileName) {
-        JsonStorage jsonStorage = new JsonStorage(fileName);
-        GroceryDAO groceryDAO = new GroceryDAO(jsonStorage);
-        return new GroceryListServiceImpl(groceryDAO);
+    public static GroceryListServiceImpl createGroceryApp(String storageType, String fileName) {
+        GenericDAO genericDAO = StorageFactory.getStorage(storageType, fileName);
+        return new GroceryListServiceImpl(genericDAO);
     }
 }

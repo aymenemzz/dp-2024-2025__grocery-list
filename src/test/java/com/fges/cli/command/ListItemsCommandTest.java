@@ -23,7 +23,7 @@ class ListItemsCommandTest {
     @DisplayName("ListItemsCommand doit appeler getAllItems du service")
     void listItemsCommand_ShouldCallService() {
         // Given
-        when(groceryService.getAllItems()).thenReturn(List.of(new Item("Pomme", 3)));
+        when(groceryService.getAllItems()).thenReturn(List.of(new Item("Pomme", 3, "fruits")));
 
         listItemsCommand = new ListItemsCommand(groceryService);
 

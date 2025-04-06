@@ -1,17 +1,17 @@
 package com.fges.serviceimpl;
 
-import com.fges.dao.GroceryDAO;
 import com.fges.service.GroceryListService;
+import com.fges.storage.dao.GenericDAO;
 import com.fges.valueobject.Item;
 
 import java.util.List;
 
 public class GroceryListServiceImpl implements GroceryListService {
 
-    private final GroceryDAO groceryDAO;
+    private final GenericDAO genericDAO;
 
-    public GroceryListServiceImpl(GroceryDAO groceryDAO) {
-        this.groceryDAO = groceryDAO;
+    public GroceryListServiceImpl(GenericDAO genericDAO) {
+        this.genericDAO = genericDAO;
     }
 
     @Override
@@ -20,7 +20,7 @@ public class GroceryListServiceImpl implements GroceryListService {
             throw new IllegalArgumentException("Impossible d'ajouter un item nul ou avec un nom vide !");
         }
         try {
-            groceryDAO.addItem(item);
+            genericDAO.addItem(item);
         } catch (Exception e) {
             throw new RuntimeException("Impossible d'appeler le groceryDAO pour ajouter un item", e);
         }
@@ -33,7 +33,7 @@ public class GroceryListServiceImpl implements GroceryListService {
         }
         try {
 
-            groceryDAO.deleteItem(item);
+            genericDAO.deleteItem(item);
         } catch (Exception e) {
             throw new RuntimeException("Impossible d'appeler le groceryDAO pour supprimer un item", e);
         }
@@ -42,7 +42,7 @@ public class GroceryListServiceImpl implements GroceryListService {
     @Override
     public List<Item> getAllItems() {
         try {
-            return groceryDAO.loadItems();
+            return genericDAO.loadAllItem();
         } catch (Exception e) {
             throw new RuntimeException("Impossible de récupérer la liste des items depuis le groceryDAO", e);
         }

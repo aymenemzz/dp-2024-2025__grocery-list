@@ -1,6 +1,6 @@
 package com.fges.serviceimpl;
 
-import com.fges.dao.GroceryDAO;
+import com.fges.storage.dao.GenericDAO;
 import com.fges.valueobject.Item;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,25 +15,25 @@ import static org.mockito.Mockito.*;
 class GroceryListServiceImplTest {
 
     private GroceryListServiceImpl groceryListService;
-    private GroceryDAO groceryDAO;
+    private GenericDAO genericDAO;
 
     @BeforeEach
     void setUp() {
-        groceryDAO = mock(GroceryDAO.class);
-        groceryListService = new GroceryListServiceImpl(groceryDAO);
+        genericDAO = mock(GenericDAO.class);
+        groceryListService = new GroceryListServiceImpl(genericDAO);
     }
 
     @Test
     @DisplayName("Ajouter un item valide doit appeler le DAO")
     void addItem_ValidItem_ShouldCallDAO() {
         // Given
-        Item item = new Item("Milk", 2);
+        Item item = new Item("Milk", 2, "fruits");
 
         // When
         groceryListService.addItem(item);
 
         // Then
-        verify(groceryDAO, times(1)).addItem(item);
+        verify(genericDAO, times(1)).addItem(item);
     }
 
     @Test
@@ -44,33 +44,33 @@ class GroceryListServiceImplTest {
         });
 
         assertEquals("Impossible d'ajouter un item nul ou avec un nom vide !", exception.getMessage());
-        verify(groceryDAO, never()).addItem(any());
+        verify(genericDAO, never()).addItem(any());
     }
 
     @Test
     @DisplayName("Ajouter un item avec un nom vide doit lever une exception")
     void addItem_BlankName_ShouldThrowException() {
-        Item item = new Item("", 2);
+        Item item = new Item("", 2,"");
 
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             groceryListService.addItem(item);
         });
 
         assertEquals("Impossible d'ajouter un item nul ou avec un nom vide !", exception.getMessage());
-        verify(groceryDAO, never()).addItem(any());
+        verify(genericDAO, never()).addItem(any());
     }
 
     @Test
     @DisplayName("Supprimer un item valide doit appeler le DAO")
     void deleteItem_ValidItem_ShouldCallDAO() {
         // Given
-        Item item = new Item("Milk", 2);
+        Item item = new Item("Milk", 2, "");
 
         // When
         groceryListService.deleteItem(item);
 
         // Then
-        verify(groceryDAO, times(1)).deleteItem(item);
+        verify(genericDAO, times(1)).deleteItem(item);
     }
 
     @Test
@@ -82,15 +82,15 @@ class GroceryListServiceImplTest {
         });
 
         assertEquals("Impossible de supprimer un item nul !", exception.getMessage());
-        verify(groceryDAO, never()).deleteItem(any());
+        verify(genericDAO, never()).deleteItem(any());
     }
 
     @Test
     @DisplayName("Récupérer tous les items doit retourner les items du DAO")
     void getAllItems_ShouldReturnItemsFromDAO() {
         // Given
-        List<Item> mockItems = Arrays.asList(new Item("Milk", 2), new Item("Eggs", 10));
-        when(groceryDAO.loadItems()).thenReturn(mockItems);
+        List<Item> mockItems = Arrays.asList(new Item("Milk", 2, "dairy"), new Item("Eggs", 10, "proteins"));
+        when(genericDAO.loadAllItem()).thenReturn(mockItems);
 
         // When
         List<Item> items = groceryListService.getAllItems();
@@ -99,15 +99,15 @@ class GroceryListServiceImplTest {
         assertEquals(2, items.size());
         assertEquals("Milk", items.get(0).getName());
         assertEquals(2, items.get(0).getQuantity());
-        verify(groceryDAO, times(1)).loadItems();
+        verify(genericDAO, times(1)).loadAllItem();
     }
 
     @Test
     @DisplayName("addItem - Une exception levée par le DAO doit être encapsulée dans une RuntimeException")
     void addItem_WhenDAOThrowsException_ShouldThrowRuntimeException() {
         // Given
-        Item item = new Item("Milk", 2);
-        doThrow(new RuntimeException("Erreur DAO")).when(groceryDAO).addItem(item);
+        Item item = new Item("Milk", 2, "");
+        doThrow(new RuntimeException("Erreur DAO")).when(genericDAO).addItem(item);
 
         // When & Then
         RuntimeException exception = assertThrows(RuntimeException.class, () -> groceryListService.addItem(item));
@@ -118,8 +118,8 @@ class GroceryListServiceImplTest {
     @DisplayName("deleteItem - Une exception levée par le DAO doit être encapsulée dans une RuntimeException")
     void deleteItem_WhenDAOThrowsException_ShouldThrowRuntimeException() {
         // Given
-        Item item = new Item("Milk", 2);
-        doThrow(new RuntimeException("Erreur DAO")).when(groceryDAO).deleteItem(item);
+        Item item = new Item("Milk", 2, "");
+        doThrow(new RuntimeException("Erreur DAO")).when(genericDAO).deleteItem(item);
 
         // When & Then
         RuntimeException exception = assertThrows(RuntimeException.class, () -> groceryListService.deleteItem(item));
@@ -130,7 +130,7 @@ class GroceryListServiceImplTest {
     @DisplayName("getAllItems - Une exception levée par le DAO doit être encapsulée dans une RuntimeException")
     void getAllItems_WhenDAOThrowsException_ShouldThrowRuntimeException() {
         // Given
-        doThrow(new RuntimeException("Erreur DAO")).when(groceryDAO).loadItems();
+        doThrow(new RuntimeException("Erreur DAO")).when(genericDAO).loadAllItem();
 
         // When & Then
         RuntimeException exception = assertThrows(RuntimeException.class, () -> groceryListService.getAllItems());

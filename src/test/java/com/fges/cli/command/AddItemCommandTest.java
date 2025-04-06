@@ -22,7 +22,7 @@ class AddItemCommandTest {
     @DisplayName("AddItemCommand doit appeler addItem du service")
     void addItemCommand_ShouldCallService() {
         // Given
-        addItemCommand = new AddItemCommand(groceryService, "Pomme", 3);
+        addItemCommand = new AddItemCommand(groceryService, "Pomme", 3, "fruits");
 
         // When
         int result = addItemCommand.execute();

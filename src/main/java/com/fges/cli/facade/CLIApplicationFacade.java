@@ -15,20 +15,41 @@ public class CLIApplicationFacade {
     }
 
     public int run() {
+        CLIApplicationBuilder builder;
+        GroceryListServiceImpl groceryService;
+        String[] remainingArgs;
+        List<String> positionalArgs;
+        CLICommandController controller;
+
         try {
-            CLIApplicationBuilder builder = new CLIApplicationBuilder(args)
+            builder = new CLIApplicationBuilder(args)
                     .setupOptions()
                     .parseArguments();
-
-            GroceryListServiceImpl groceryService = builder.buildService();
-
-            List<String> positionalArgs = List.of(args).subList(1, args.length);
-            CLICommandController controller = new CLICommandController(groceryService, positionalArgs);
-
-            return controller.executeCommand();
-
         } catch (ParseException e) {
             System.err.println("Fail to parse arguments: " + e.getMessage());
+            return 1;
+        }
+
+        try {
+            groceryService = builder.buildService();
+        } catch (Exception e) {
+            System.err.println("Error building service: " + e.getMessage());
+            return 1;
+        }
+
+        remainingArgs = builder.getParsedArgs();
+        positionalArgs = List.of(remainingArgs);
+
+        System.err.println("Arguments finaux envoyés au controller: " + positionalArgs);
+
+        try {
+            controller = new CLICommandController(groceryService, positionalArgs, builder.getCategory());
+            return controller.executeCommand();
+        } catch (NullPointerException e) {
+            System.err.println("Controller returned null: " + e.getMessage());
+            return 1;
+        } catch (Exception e) {
+            System.err.println("Unexpected error during execution: " + e.getMessage());
             return 1;
         }
     }
