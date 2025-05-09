@@ -1,6 +1,7 @@
-package com.fges.cli.command;
+package com.fges.adapters.in.cli.command;
 
-import com.fges.serviceimpl.GroceryListServiceImpl;
+import com.fges.application.service.GroceryListServiceImpl;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

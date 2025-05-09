@@ -1,8 +1,9 @@
 package com.fges.cli.controller;
 
-import com.fges.cli.command.Command;
+import com.fges.adapters.in.cli.command.Command;
+import com.fges.adapters.in.cli.controller.CLICommandController;
+import com.fges.application.service.GroceryListServiceImpl;
 import com.fges.factory.CommandFactory;
-import com.fges.serviceimpl.GroceryListServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

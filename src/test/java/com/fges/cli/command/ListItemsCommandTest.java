@@ -1,8 +1,9 @@
 package com.fges.cli.command;
 
-import com.fges.serviceimpl.GroceryListServiceImpl;
-import com.fges.valueobject.GroceryItem;
-import com.fges.valueobject.GroceryList;
+import com.fges.adapters.in.cli.command.ListItemsCommand;
+import com.fges.application.service.GroceryListServiceImpl;
+import com.fges.domain.GroceryItem;
+import com.fges.domain.GroceryList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

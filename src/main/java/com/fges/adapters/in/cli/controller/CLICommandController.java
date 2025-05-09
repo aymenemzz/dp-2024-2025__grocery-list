@@ -1,8 +1,8 @@
-package com.fges.cli.controller;
+package com.fges.adapters.in.cli.controller;
 
-import com.fges.cli.command.Command;
+import com.fges.adapters.in.cli.command.Command;
+import com.fges.application.service.GroceryListServiceImpl;
 import com.fges.factory.CommandFactory;
-import com.fges.serviceimpl.GroceryListServiceImpl;
 import java.util.List;
 
 public class CLICommandController {

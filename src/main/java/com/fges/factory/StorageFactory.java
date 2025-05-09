@@ -1,8 +1,8 @@
 package com.fges.factory;
 
+import com.fges.application.port.out.GroceryDAO;
 import com.fges.storage.CsvStorageDAO;
 import com.fges.storage.JsonStorageDAO;
-import com.fges.storage.dao.GroceryDAO;
 
 public class StorageFactory {
 

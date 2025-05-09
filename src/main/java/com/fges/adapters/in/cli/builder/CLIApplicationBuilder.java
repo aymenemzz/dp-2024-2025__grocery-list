@@ -1,7 +1,7 @@
-package com.fges.cli.builder;
+package com.fges.adapters.in.cli.builder;
 
+import com.fges.application.service.GroceryListServiceImpl;
 import com.fges.factory.GroceryAppFactory;
-import com.fges.serviceimpl.GroceryListServiceImpl;
 import org.apache.commons.cli.*;
 
 public class CLIApplicationBuilder {

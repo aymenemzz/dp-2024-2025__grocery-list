@@ -1,8 +1,8 @@
-package com.fges.cli.facade;
+package com.fges.adapters.in.cli.facade;
 
-import com.fges.cli.builder.CLIApplicationBuilder;
-import com.fges.cli.controller.CLICommandController;
-import com.fges.serviceimpl.GroceryListServiceImpl;
+import com.fges.adapters.in.cli.builder.CLIApplicationBuilder;
+import com.fges.adapters.in.cli.controller.CLICommandController;
+import com.fges.application.service.GroceryListServiceImpl;
 import com.fges.valueobject.SystemInfo;
 import org.apache.commons.cli.ParseException;
 

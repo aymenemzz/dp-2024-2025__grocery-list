@@ -1,11 +1,10 @@
-package com.fges.serviceimpl;
+package com.fges.application.service;
 
-import com.fges.service.GroceryListService;
-import com.fges.storage.dao.GroceryDAO;
-import com.fges.valueobject.GroceryItem;
-import com.fges.valueobject.GroceryList;
+import com.fges.application.port.in.GroceryListService;
+import com.fges.application.port.out.GroceryDAO;
+import com.fges.domain.GroceryItem;
+import com.fges.domain.GroceryList;
 
-import java.util.List;
 
 public class GroceryListServiceImpl implements GroceryListService {
 

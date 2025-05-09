@@ -1,7 +1,7 @@
 package com.fges.factory;
 
-import com.fges.serviceimpl.GroceryListServiceImpl;
-import com.fges.storage.dao.GroceryDAO;
+import com.fges.application.port.out.GroceryDAO;
+import com.fges.application.service.GroceryListServiceImpl;
 
 
 public class GroceryAppFactory {

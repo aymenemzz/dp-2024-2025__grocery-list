@@ -1,9 +1,9 @@
 package com.fges.storage;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fges.storage.dao.GroceryDAO;
-import com.fges.valueobject.GroceryItem;
-import com.fges.valueobject.GroceryList;
+import com.fges.application.port.out.GroceryDAO;
+import com.fges.domain.GroceryItem;
+import com.fges.domain.GroceryList;
 import lombok.Getter;
 
 import java.io.File;

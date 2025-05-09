@@ -1,10 +1,11 @@
 package com.fges.factory;
 
-import com.fges.cli.command.AddItemCommand;
-import com.fges.cli.command.Command;
-import com.fges.cli.command.ListItemsCommand;
-import com.fges.cli.command.RemoveItemCommand;
-import com.fges.serviceimpl.GroceryListServiceImpl;
+
+import com.fges.adapters.in.cli.command.AddItemCommand;
+import com.fges.adapters.in.cli.command.Command;
+import com.fges.adapters.in.cli.command.ListItemsCommand;
+import com.fges.adapters.in.cli.command.RemoveItemCommand;
+import com.fges.application.service.GroceryListServiceImpl;
 import lombok.NoArgsConstructor;
 
 import java.util.List;

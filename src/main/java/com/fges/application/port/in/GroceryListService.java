@@ -1,7 +1,9 @@
-package com.fges.service;
+package com.fges.application.port.in;
 
-import com.fges.valueobject.GroceryItem;
-import com.fges.valueobject.GroceryList;
+
+
+import com.fges.domain.GroceryItem;
+import com.fges.domain.GroceryList;
 
 import java.util.List;
 

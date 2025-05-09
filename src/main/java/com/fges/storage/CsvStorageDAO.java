@@ -1,8 +1,8 @@
 package com.fges.storage;
 
-import com.fges.storage.dao.GroceryDAO;
-import com.fges.valueobject.GroceryItem;
-import com.fges.valueobject.GroceryList;
+import com.fges.application.port.out.GroceryDAO;
+import com.fges.domain.GroceryItem;
+import com.fges.domain.GroceryList;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -12,7 +12,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class CsvStorageDAO implements GroceryDAO {
     private final Path storagePath;

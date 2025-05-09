@@ -1,4 +1,4 @@
-package com.fges.valueobject;
+package com.fges.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

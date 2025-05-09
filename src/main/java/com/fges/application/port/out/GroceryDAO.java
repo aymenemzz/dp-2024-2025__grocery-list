@@ -1,7 +1,7 @@
-package com.fges.storage.dao;
+package com.fges.application.port.out;
 
-import com.fges.valueobject.GroceryItem;
-import com.fges.valueobject.GroceryList;
+import com.fges.domain.GroceryItem;
+import com.fges.domain.GroceryList;
 
 public interface GroceryDAO {
     void addItem(GroceryItem groceryItem);

@@ -1,7 +1,8 @@
-package com.fges.cli.command;
+package com.fges.adapters.in.cli.command;
 
-import com.fges.serviceimpl.GroceryListServiceImpl;
-import com.fges.valueobject.GroceryItem;
+
+import com.fges.application.service.GroceryListServiceImpl;
+import com.fges.domain.GroceryItem;
 
 public class RemoveItemCommand implements Command {
     private final GroceryListServiceImpl service;
