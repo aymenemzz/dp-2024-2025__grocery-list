@@ -17,7 +17,7 @@ public class ListItemsCommand implements Command {
     public int execute() {
         Map<String, List<String>> categorizedItems = new HashMap<>();
 
-        service.getAllItems().forEach(item -> {
+        service.getAllItems().getGroceryItemList().forEach(item -> {
             String category = item.getCategory();
             String line = "\t" + item.getName() + " : " + item.getQuantity();
             categorizedItems.computeIfAbsent(category, k -> new ArrayList<>()).add(line);

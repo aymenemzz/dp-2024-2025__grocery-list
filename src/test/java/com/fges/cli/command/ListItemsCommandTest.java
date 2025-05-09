@@ -1,7 +1,8 @@
 package com.fges.cli.command;
 
 import com.fges.serviceimpl.GroceryListServiceImpl;
-import com.fges.valueobject.Item;
+import com.fges.valueobject.GroceryItem;
+import com.fges.valueobject.GroceryList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,7 @@ class ListItemsCommandTest {
     @DisplayName("ListItemsCommand doit appeler getAllItems du service")
     void listItemsCommand_ShouldCallService() {
         // Given
-        when(groceryService.getAllItems()).thenReturn(List.of(new Item("Pomme", 3, "fruits")));
+        when(groceryService.getAllItems()).thenReturn(new GroceryList(List.of(new GroceryItem("Pomme", 3, "fruits"))));
 
         listItemsCommand = new ListItemsCommand(groceryService);
 

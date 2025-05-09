@@ -15,7 +15,7 @@ public class CLIApplicationBuilder {
     }
 
     public CLIApplicationBuilder setupOptions() {
-        cliOptions.addRequiredOption("s", "source", true, "File containing the grocery list");
+        cliOptions.addOption("s", "source", true, "File containing the grocery list");
         cliOptions.addOption("f", "format", true, "Storage format: csv or json (default: json)");
         cliOptions.addOption("c", "category",true, "Category of element, by default the categoy is 'default'");
         return this;
@@ -23,7 +23,12 @@ public class CLIApplicationBuilder {
 
     public CLIApplicationBuilder parseArguments() throws ParseException {
         CommandLineParser parser = new DefaultParser();
-        this.cmd = parser.parse(cliOptions, args, true);
+        // Permettre une exception à la règle des options obligatoires si la commande "info" est utilisée
+        if (args.length > 0 && args[0].equals("info")) {
+            this.cmd = parser.parse(cliOptions, args, false); // n'exige pas les options
+        } else {
+            this.cmd = parser.parse(cliOptions, args, true); // exige les options
+        }
         return this;
     }
 
@@ -32,7 +37,12 @@ public class CLIApplicationBuilder {
     }
 
     public GroceryListServiceImpl buildService() {
-        String fileName = cmd.getOptionValue("s");
+        String fileName;
+        if (cmd.hasOption("s")) {
+            fileName = cmd.getOptionValue("s");
+        } else {
+            throw new RuntimeException("Missing required option to manage your grocery list: -s");
+        }
         String format = cmd.hasOption("f") ? cmd.getOptionValue("f") : "json"; // Par défaut JSON
         String[] remainingArgs = cmd.getArgs();
         if (remainingArgs.length == 0) {
@@ -44,5 +54,10 @@ public class CLIApplicationBuilder {
 
     public String getCategory() {
         return cmd.hasOption("c") ? cmd.getOptionValue("c") : "default";
+    }
+
+    public String getCommand() {
+        String[] args = cmd.getArgs();
+        return args.length > 0 ? args[0] : null;
     }
 }

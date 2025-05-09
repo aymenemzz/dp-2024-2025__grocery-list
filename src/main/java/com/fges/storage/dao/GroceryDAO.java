@@ -1,13 +1,11 @@
-package com.fges.service;
+package com.fges.storage.dao;
 
 import com.fges.valueobject.GroceryItem;
 import com.fges.valueobject.GroceryList;
 
-import java.util.List;
-
-public interface GroceryListService {
-
+public interface GroceryDAO {
     void addItem(GroceryItem groceryItem);
+    void addItemList(GroceryList groceryList);
+    GroceryList loadAllItem();
     void deleteItem(GroceryItem groceryItem);
-    GroceryList getAllItems();
 }

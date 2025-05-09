@@ -9,8 +9,17 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Item {
+public class GroceryItem {
     private String name;
     private Integer quantity;
     private String category;
+
+    @Override
+    public String toString() {
+        return "GroceryItem{" +
+                "name='" + name + '\'' +
+                ", quantity=" + quantity +
+                ", category='" + category + '\'' +
+                '}';
+    }
 }

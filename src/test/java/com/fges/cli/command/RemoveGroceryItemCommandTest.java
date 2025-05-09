@@ -1,7 +1,7 @@
 package com.fges.cli.command;
 
 import com.fges.serviceimpl.GroceryListServiceImpl;
-import com.fges.valueobject.Item;
+import com.fges.valueobject.GroceryItem;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-class RemoveItemCommandTest {
+class RemoveGroceryItemCommandTest {
     private GroceryListServiceImpl groceryService;
     private RemoveItemCommand removeItemCommand;
 
@@ -29,6 +29,6 @@ class RemoveItemCommandTest {
 
         // Then
         assertEquals(0, result);
-        verify(groceryService, times(1)).deleteItem(any(Item.class));
+        verify(groceryService, times(1)).deleteItem(any(GroceryItem.class));
     }
 }

@@ -1,8 +1,9 @@
 package com.fges.storage;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fges.storage.dao.GenericDAO;
-import com.fges.valueobject.Item;
+import com.fges.storage.dao.GroceryDAO;
+import com.fges.valueobject.GroceryItem;
+import com.fges.valueobject.GroceryList;
 import lombok.Getter;
 
 import java.io.File;
@@ -12,10 +13,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-public class JsonStorageDAO implements GenericDAO {
+public class JsonStorageDAO implements GroceryDAO {
     private static String filename;
     @Getter
     private final Path storagePath;
@@ -36,7 +36,7 @@ public class JsonStorageDAO implements GenericDAO {
                     throw new IOException("Impossible de créer le fichier.");
                 }
                 System.err.println("Fichier JSON créé : " + file.getAbsolutePath());
-                saveItems(new ArrayList<>()); // Initialise le fichier avec une liste vide
+                saveItems(new GroceryList(new ArrayList<>())); // Initialise le fichier avec une liste vide
             } catch (IOException e) {
                 throw new RuntimeException("Erreur lors de la création du fichier : " + filename, e);
             }
@@ -44,15 +44,15 @@ public class JsonStorageDAO implements GenericDAO {
     }
 
     @Override
-    public void addItem(Item item) {
-        List<Item> items = loadAllItem();
+    public void addItem(GroceryItem groceryItem) {
+        GroceryList groceryList = loadAllItem();
 
         // Vérifie si l'élément existe déjà et met à jour la quantité si nécessaire
         boolean itemExists = false;
-        for (Item existingItem : items) {
-            if (existingItem.getName().equals(item.getName()) &&
-                existingItem.getCategory().equals(item.getCategory())) {
-                existingItem.setQuantity(existingItem.getQuantity() + item.getQuantity());
+        for (GroceryItem existingGroceryItem : groceryList.getGroceryItemList()) {
+            if (existingGroceryItem.getName().equals(groceryItem.getName()) &&
+                existingGroceryItem.getCategory().equals(groceryItem.getCategory())) {
+                existingGroceryItem.setQuantity(existingGroceryItem.getQuantity() + groceryItem.getQuantity());
                 itemExists = true;
                 break;
             }
@@ -60,23 +60,22 @@ public class JsonStorageDAO implements GenericDAO {
 
         // Si l'élément n'existe pas, on l'ajoute
         if (!itemExists) {
-            items.add(new Item(item.getName(), item.getQuantity(), item.getCategory()));
+            groceryList.addToList(new GroceryItem(groceryItem.getName(), groceryItem.getQuantity(), groceryItem.getCategory()));
         }
 
-        saveItems(items);
+        saveItems(groceryList);
     }
 
     @Override
-    public void addItemList(List<Item> itemList) {
-        List<Item> items = loadAllItem();
-        items.addAll(itemList);
-        saveItems(items);
+    public void addItemList(GroceryList groceryItemList) {
+        GroceryList groceryList = groceryItemList;
+        saveItems(groceryList);
     }
 
     @Override
-    public List<Item> loadAllItem() {
+    public GroceryList loadAllItem() {
         if (!Files.exists(storagePath) || storagePath.toFile().length() == 0) {
-            return new ArrayList<>();
+            return new GroceryList(new ArrayList<>());
         }
 
         try {
@@ -87,39 +86,39 @@ public class JsonStorageDAO implements GenericDAO {
                             objectMapper.getTypeFactory().constructMapType(Map.class, String.class, Integer.class))
             );
 
-            List<Item> items = new ArrayList<>();
+            GroceryList groceryList = new GroceryList(new ArrayList<>());
             for (Map.Entry<String, Map<String, Integer>> categoryEntry : categorizedItems.entrySet()) {
                 String category = categoryEntry.getKey();
                 for (Map.Entry<String, Integer> itemEntry : categoryEntry.getValue().entrySet()) {
-                    items.add(new Item(itemEntry.getKey(), itemEntry.getValue(), category));
+                    groceryList.addToList(new GroceryItem(itemEntry.getKey(), itemEntry.getValue(), category));
                 }
             }
 
-            return items;
+            return groceryList;
         } catch (IOException e) {
             throw new RuntimeException("Erreur lors de la lecture du fichier JSON : " + storagePath, e);
         }
     }
 
     @Override
-    public void deleteItem(Item item) {
-        List<Item> items = loadAllItem();
-        boolean removed = items.removeIf(existingItem -> existingItem.getName().equals(item.getName()));
+    public void deleteItem(GroceryItem groceryItem) {
+        GroceryList groceryList = loadAllItem();
+        boolean removed = groceryList.getGroceryItemList().removeIf(existingItem -> existingItem.getName().equals(groceryItem.getName()));
 
         if (removed) {
-            saveItems(items);
+            saveItems(groceryList);
         } else {
             throw new IllegalArgumentException("L'item à supprimer n'existe pas !");
         }
     }
 
-    private void saveItems(List<Item> items) {
+    private void saveItems(GroceryList groceryList) {
         try {
             Map<String, Map<String, Integer>> categorizedItems = new HashMap<>();
-            for (Item item : items) {
+            for (GroceryItem groceryItem : groceryList.getGroceryItemList()) {
                 categorizedItems
-                        .computeIfAbsent(item.getCategory(), k -> new HashMap<>())
-                        .put(item.getName(), item.getQuantity());
+                        .computeIfAbsent(groceryItem.getCategory(), k -> new HashMap<>())
+                        .put(groceryItem.getName(), groceryItem.getQuantity());
             }
             objectMapper.writeValue(storagePath.toFile(), categorizedItems);
         } catch (IOException e) {

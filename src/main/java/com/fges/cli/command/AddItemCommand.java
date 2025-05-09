@@ -1,7 +1,7 @@
 package com.fges.cli.command;
 
 import com.fges.serviceimpl.GroceryListServiceImpl;
-import com.fges.valueobject.Item;
+import com.fges.valueobject.GroceryItem;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -14,7 +14,8 @@ public class AddItemCommand implements Command {
 
     @Override
     public int execute() {
-        service.addItem(new Item(itemName, quantity, category));
+
+        service.addItem(new GroceryItem(itemName, quantity, category));
 
         return 0;
     }

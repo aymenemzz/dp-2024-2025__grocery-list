@@ -1,50 +1,51 @@
 package com.fges.serviceimpl;
 
 import com.fges.service.GroceryListService;
-import com.fges.storage.dao.GenericDAO;
-import com.fges.valueobject.Item;
+import com.fges.storage.dao.GroceryDAO;
+import com.fges.valueobject.GroceryItem;
+import com.fges.valueobject.GroceryList;
 
 import java.util.List;
 
 public class GroceryListServiceImpl implements GroceryListService {
 
-    private final GenericDAO genericDAO;
+    private final GroceryDAO groceryDAO;
 
-    public GroceryListServiceImpl(GenericDAO genericDAO) {
-        this.genericDAO = genericDAO;
+    public GroceryListServiceImpl(GroceryDAO groceryDAO) {
+        this.groceryDAO = groceryDAO;
     }
 
     @Override
-    public void addItem(Item item) {
-        if (item == null || item.getName().isBlank()) {
+    public void addItem(GroceryItem groceryItem) {
+        if (groceryItem == null || groceryItem.getName().isBlank()) {
             throw new IllegalArgumentException("Impossible d'ajouter un item nul ou avec un nom vide !");
         }
         try {
-            genericDAO.addItem(item);
+            groceryDAO.addItem(groceryItem);
         } catch (Exception e) {
-            throw new RuntimeException("Impossible d'appeler le groceryDAO pour ajouter un item", e);
+            throw new RuntimeException("Impossible d'appeler le groceryDAO pour ajouter un item " + e, e);
         }
     }
 
     @Override
-    public void deleteItem(Item item) {
-        if (item == null) {
+    public void deleteItem(GroceryItem groceryItem) {
+        if (groceryItem == null) {
             throw new IllegalArgumentException("Impossible de supprimer un item nul !");
         }
         try {
 
-            genericDAO.deleteItem(item);
+            groceryDAO.deleteItem(groceryItem);
         } catch (Exception e) {
             throw new RuntimeException("Impossible d'appeler le groceryDAO pour supprimer un item", e);
         }
     }
 
     @Override
-    public List<Item> getAllItems() {
+    public GroceryList getAllItems() {
         try {
-            return genericDAO.loadAllItem();
+            return groceryDAO.loadAllItem();
         } catch (Exception e) {
-            throw new RuntimeException("Impossible de récupérer la liste des items depuis le groceryDAO", e);
+            throw new RuntimeException("Impossible de récupérer la liste des items depuis le groceryDAO : " + e, e);
         }
     }
 }

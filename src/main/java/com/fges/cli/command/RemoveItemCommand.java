@@ -1,7 +1,7 @@
 package com.fges.cli.command;
 
 import com.fges.serviceimpl.GroceryListServiceImpl;
-import com.fges.valueobject.Item;
+import com.fges.valueobject.GroceryItem;
 
 public class RemoveItemCommand implements Command {
     private final GroceryListServiceImpl service;
@@ -14,7 +14,7 @@ public class RemoveItemCommand implements Command {
 
     @Override
     public int execute() {
-        service.deleteItem(new Item(itemName, 0, "default"));
+        service.deleteItem(new GroceryItem(itemName, 0, "default"));
         return 0;
     }
 }

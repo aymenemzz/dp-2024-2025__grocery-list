@@ -3,6 +3,7 @@ package com.fges.cli.facade;
 import com.fges.cli.builder.CLIApplicationBuilder;
 import com.fges.cli.controller.CLICommandController;
 import com.fges.serviceimpl.GroceryListServiceImpl;
+import com.fges.valueobject.SystemInfo;
 import org.apache.commons.cli.ParseException;
 
 import java.util.List;
@@ -25,11 +26,16 @@ public class CLIApplicationFacade {
             builder = new CLIApplicationBuilder(args)
                     .setupOptions()
                     .parseArguments();
+
+            if ("info".equals(builder.getCommand())) {
+                System.out.println(new SystemInfo());
+                return 0;
+            }
+
         } catch (ParseException e) {
             System.err.println("Fail to parse arguments: " + e.getMessage());
             return 1;
         }
-
         try {
             groceryService = builder.buildService();
         } catch (Exception e) {
@@ -39,8 +45,6 @@ public class CLIApplicationFacade {
 
         remainingArgs = builder.getParsedArgs();
         positionalArgs = List.of(remainingArgs);
-
-        System.err.println("Arguments finaux envoyés au controller: " + positionalArgs);
 
         try {
             controller = new CLICommandController(groceryService, positionalArgs, builder.getCategory());
