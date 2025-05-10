@@ -1,0 +1,6 @@
+[submodule "test_auto/grocery-web/grocery-source"]
+	path = test_auto/grocery-web/grocery-source
+	url = https://github.com/Anthony-Jhoiro/grocery-web.git
+[submodule "grocery-web/grocery-source"]
+	path = grocery-web/grocery-source
+	url = https://github.com/Anthony-Jhoiro/grocery-web.git
