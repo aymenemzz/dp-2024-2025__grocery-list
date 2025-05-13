@@ -60,4 +60,17 @@ public class CLIApplicationBuilder {
         String[] args = cmd.getArgs();
         return args.length > 0 ? args[0] : null;
     }
+    public int getWebPort() {
+        String[] args = cmd.getArgs();
+        for (int i = 0; i < args.length - 1; i++) {
+            if ("web".equals(args[i])) {
+                try {
+                    return Integer.parseInt(args[i + 1]);
+                } catch (NumberFormatException e) {
+                    throw new IllegalArgumentException("Invalid port number after 'web' command.");
+                }
+            }
+        }
+        return 8080; // Valeur par défaut
+    }
 }

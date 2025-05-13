@@ -25,6 +25,10 @@ public class CommandFactory {
                 if (args.isEmpty()) throw new IllegalArgumentException("Arguments manquants pour la commande remove");
                 return new RemoveItemCommand(service, args.getFirst());
             }
+            case "web" -> {
+                int port = Integer.parseInt(args.get(0));
+                return new com.fges.adapters.in.cli.command.WebCommand(service, port);
+            }
             default -> throw new IllegalArgumentException("Commande inconnue: " + command);
         }
     }

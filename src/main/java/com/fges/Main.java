@@ -1,7 +1,7 @@
 package com.fges;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fges.cli.facade.CLIApplicationFacade;
+import com.fges.adapters.in.cli.facade.CLIApplicationFacade;
 
 import java.io.IOException;
 
