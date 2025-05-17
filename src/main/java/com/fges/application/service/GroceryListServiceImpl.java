@@ -35,7 +35,7 @@ public class GroceryListServiceImpl implements GroceryListService {
 
             groceryDAO.deleteItem(groceryItem);
         } catch (Exception e) {
-            throw new RuntimeException("Impossible d'appeler le groceryDAO pour supprimer un item", e);
+            throw new RuntimeException("Impossible d'appeler le groceryDAO pour supprimer un item :" + e, e);
         }
     }
 

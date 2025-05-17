@@ -50,8 +50,8 @@ public class JsonStorageDAO implements GroceryDAO {
         // Vérifie si l'élément existe déjà et met à jour la quantité si nécessaire
         boolean itemExists = false;
         for (GroceryItem existingGroceryItem : groceryList.getGroceryItemList()) {
-            if (existingGroceryItem.getName().equals(groceryItem.getName()) &&
-                existingGroceryItem.getCategory().equals(groceryItem.getCategory())) {
+            if (existingGroceryItem.getName().trim().equals(groceryItem.getName().trim()) &&
+                existingGroceryItem.getCategory().trim().equals(groceryItem.getCategory().trim())) {
                 existingGroceryItem.setQuantity(existingGroceryItem.getQuantity() + groceryItem.getQuantity());
                 itemExists = true;
                 break;
@@ -103,12 +103,14 @@ public class JsonStorageDAO implements GroceryDAO {
     @Override
     public void deleteItem(GroceryItem groceryItem) {
         GroceryList groceryList = loadAllItem();
-        boolean removed = groceryList.getGroceryItemList().removeIf(existingItem -> existingItem.getName().equals(groceryItem.getName()));
+        boolean removed = groceryList.getGroceryItemList().removeIf(existingItem ->
+                existingItem.getName().trim().equals(groceryItem.getName().trim())
+        );
 
         if (removed) {
             saveItems(groceryList);
         } else {
-            throw new IllegalArgumentException("L'item à supprimer n'existe pas !");
+            throw new IllegalArgumentException("L'item à supprimer n'existe pas ! ");
         }
     }
 
@@ -117,8 +119,8 @@ public class JsonStorageDAO implements GroceryDAO {
             Map<String, Map<String, Integer>> categorizedItems = new HashMap<>();
             for (GroceryItem groceryItem : groceryList.getGroceryItemList()) {
                 categorizedItems
-                        .computeIfAbsent(groceryItem.getCategory(), k -> new HashMap<>())
-                        .put(groceryItem.getName(), groceryItem.getQuantity());
+                        .computeIfAbsent(groceryItem.getCategory().trim(), k -> new HashMap<>())
+                        .put(groceryItem.getName().trim(), groceryItem.getQuantity());
             }
             objectMapper.writeValue(storagePath.toFile(), categorizedItems);
         } catch (IOException e) {
