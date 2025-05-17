@@ -37,18 +37,17 @@ public class CLIApplicationBuilder {
     }
 
     public GroceryListServiceImpl buildService() {
+        String[] remainingArgs = cmd.getArgs();
+        if (remainingArgs.length > 0 && "info".equals(remainingArgs[0])) {
+            return null;
+        }
         String fileName;
         if (cmd.hasOption("s")) {
             fileName = cmd.getOptionValue("s");
         } else {
             throw new RuntimeException("Missing required option to manage your grocery list: -s");
         }
-        String format = cmd.hasOption("f") ? cmd.getOptionValue("f") : "json"; // Par défaut JSON
-        String[] remainingArgs = cmd.getArgs();
-        if (remainingArgs.length == 0) {
-            throw new IllegalArgumentException("Aucune commande fournie après les options.");
-        }
-
+        String format = cmd.hasOption("f") ? cmd.getOptionValue("f") : "json";
         return GroceryAppFactory.createGroceryApp(format, fileName);
     }
 
@@ -56,21 +55,4 @@ public class CLIApplicationBuilder {
         return cmd.hasOption("c") ? cmd.getOptionValue("c") : "default";
     }
 
-    public String getCommand() {
-        String[] args = cmd.getArgs();
-        return args.length > 0 ? args[0] : null;
-    }
-    public int getWebPort() {
-        String[] args = cmd.getArgs();
-        for (int i = 0; i < args.length - 1; i++) {
-            if ("web".equals(args[i])) {
-                try {
-                    return Integer.parseInt(args[i + 1]);
-                } catch (NumberFormatException e) {
-                    throw new IllegalArgumentException("Invalid port number after 'web' command.");
-                }
-            }
-        }
-        return 8080; // Valeur par défaut
-    }
 }

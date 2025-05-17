@@ -27,10 +27,6 @@ public class CLIApplicationFacade {
                     .setupOptions()
                     .parseArguments();
 
-            if ("info".equals(builder.getCommand())) {
-                System.out.println(new SystemInfo());
-                return 0;
-            }
 
         } catch (ParseException e) {
             System.err.println("Fail to parse arguments: " + e.getMessage());
@@ -49,9 +45,6 @@ public class CLIApplicationFacade {
         try {
             controller = new CLICommandController(groceryService, positionalArgs, builder.getCategory());
             return controller.executeCommand();
-        } catch (NullPointerException e) {
-            System.err.println("Controller returned null: " + e.getMessage());
-            return 1;
         } catch (Exception e) {
             System.err.println("Unexpected error during execution: " + e.getMessage());
             return 1;

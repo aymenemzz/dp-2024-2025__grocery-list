@@ -1,13 +1,13 @@
-package com.fges;
+package com.fges.valueobject;
 
 import org.junit.jupiter.api.Test;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
-class SmokeTest {
+class SystemInfoTest {
 
     @Test
-    void should_allways_pass() {
+    void should_doSomething() {
+        // TODO: write test for SystemInfo
         assertThat(true).isTrue();
     }
 }

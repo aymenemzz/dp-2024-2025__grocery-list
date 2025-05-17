@@ -1,10 +1,7 @@
 package com.fges.factory;
 
 
-import com.fges.adapters.in.cli.command.AddItemCommand;
-import com.fges.adapters.in.cli.command.Command;
-import com.fges.adapters.in.cli.command.ListItemsCommand;
-import com.fges.adapters.in.cli.command.RemoveItemCommand;
+import com.fges.adapters.in.cli.command.*;
 import com.fges.application.service.GroceryListServiceImpl;
 import lombok.NoArgsConstructor;
 
@@ -27,7 +24,10 @@ public class CommandFactory {
             }
             case "web" -> {
                 int port = Integer.parseInt(args.get(0));
-                return new com.fges.adapters.in.cli.command.WebCommand(service, port);
+                return new WebCommand(service, port);
+            }
+            case "info" -> {
+                return new InfoCommand();
             }
             default -> throw new IllegalArgumentException("Commande inconnue: " + command);
         }

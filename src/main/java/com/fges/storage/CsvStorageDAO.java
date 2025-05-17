@@ -49,7 +49,9 @@ public class CsvStorageDAO implements GroceryDAO {
 
             for (int i = 1; i < lines.size(); i++) {
                 String[] parts = lines.get(i).split(",");
-                if (parts.length >= 3 && parts[0].equals(groceryItem.getName()) && parts[2].equals(groceryItem.getCategory())) {
+                if (parts.length >= 3
+                        && parts[0].trim().equals(groceryItem.getName().trim())
+                        && parts[2].trim().equals(groceryItem.getCategory().trim())) {
                     int newQuantity = Integer.parseInt(parts[1]) + groceryItem.getQuantity();
                     updatedLines.add(parts[0] + "," + newQuantity + "," + parts[2]);
                     itemUpdated = true;
@@ -114,7 +116,7 @@ public class CsvStorageDAO implements GroceryDAO {
             boolean removed = false;
             for (int i = 1; i < lines.size(); i++) {
                 String[] parts = lines.get(i).split(",");
-                if (parts[0].equals(groceryItem.getName())) {
+                if (parts[0].trim().equals(groceryItem.getName().trim())) {
                     removed = true;
                     continue;
                 }
