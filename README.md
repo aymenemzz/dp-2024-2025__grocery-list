@@ -80,19 +80,19 @@ Well... Almost anything except:
 
 ## Features
 
-### Add an item to the list
+### Add an groceryItem to the list
 
 ```bash
 java -jar ./target/dp-2024-2025__grocery-list-1.0-SNAPSHOT.jar -s groceries.json add "Milk" 10
 ```
 
-### List the items in the list
+### List the groceryItems in the list
 
 ```bash
 java -jar ./target/dp-2024-2025__grocery-list-1.0-SNAPSHOT.jar -s groceries.json list
 ```
 
-### Remove an item from the list
+### Remove an groceryItem from the list
 
 ```bash
 java -jar ./target/dp-2024-2025__grocery-list-1.0-SNAPSHOT.jar -s groceries.json remove "Milk"

@@ -1,89 +1,125 @@
 package com.fges.storage;
 
-import com.fges.valueobject.Item;
-import org.junit.jupiter.api.*;
+import com.fges.domain.GroceryItem;
+import com.fges.domain.GroceryList;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class CsvStorageDAOTest {
+class CsvStorageDAOTest {
 
-    private static final String TEST_FILE = "test_storage.csv";
-    private CsvStorageDAO dao;
-
-    @BeforeEach
-    void setUp() throws IOException {
-        Files.deleteIfExists(Path.of(TEST_FILE));
-        dao = new CsvStorageDAO(TEST_FILE);
-    }
+    @TempDir
+    Path tempDir;
 
     @Test
-    @Order(1)
-    @DisplayName("Ajoute un item et le récupère")
-    void testAddAndLoadItem() {
-        Item item = new Item("Lait", 2, "Boisson");
+    void should_addAndLoadItemCorrectly() {
+        Path filePath = tempDir.resolve("grocery.csv");
+        CsvStorageDAO dao = new CsvStorageDAO(filePath.toString());
+
+        GroceryItem item = new GroceryItem("apple", 2, "fruit");
         dao.addItem(item);
 
-        List<Item> items = dao.loadAllItem();
-        assertEquals(1, items.size());
-        assertEquals("Lait", items.get(0).getName());
-        assertEquals(2, items.get(0).getQuantity());
-        assertEquals("Boisson", items.get(0).getCategory());
+        GroceryList loaded = dao.loadAllItem();
+        assertThat(loaded.getGroceryItemList()).hasSize(1);
+        GroceryItem loadedItem = loaded.getGroceryItemList().get(0);
+        assertThat(loadedItem.getName()).isEqualTo("apple");
+        assertThat(loadedItem.getQuantity()).isEqualTo(2);
+        assertThat(loadedItem.getCategory()).isEqualTo("fruit");
     }
 
     @Test
-    @Order(2)
-    @DisplayName("Met à jour la quantité d'un item existant")
-    void testUpdateExistingItem() {
-        dao.addItem(new Item("Pain", 1, "Boulangerie"));
-        dao.addItem(new Item("Pain", 2, "Boulangerie"));
+    void should_updateItemQuantity_whenItemExists() {
+        Path filePath = tempDir.resolve("grocery.csv");
+        CsvStorageDAO dao = new CsvStorageDAO(filePath.toString());
 
-        List<Item> items = dao.loadAllItem();
-        assertEquals(1, items.size());
-        assertEquals(3, items.get(0).getQuantity());
+        dao.addItem(new GroceryItem("banana", 1, "fruit"));
+        dao.addItem(new GroceryItem("banana", 2, "fruit")); // should update to 3
+
+        GroceryList loaded = dao.loadAllItem();
+        assertThat(loaded.getGroceryItemList()).hasSize(1);
+        assertThat(loaded.getGroceryItemList().get(0).getQuantity()).isEqualTo(3);
     }
 
     @Test
-    @Order(3)
-    @DisplayName("Ajoute une liste d'items")
-    void testAddItemList() {
-        dao.addItemList(List.of(
-                new Item("Jus", 3, "Boisson"),
-                new Item("Beurre", 1, "Épicerie")
-        ));
+    void should_deleteItem_whenItExists() {
+        Path filePath = tempDir.resolve("grocery.csv");
+        CsvStorageDAO dao = new CsvStorageDAO(filePath.toString());
 
-        List<Item> items = dao.loadAllItem();
-        assertEquals(2, items.size());
+        dao.addItem(new GroceryItem("milk", 1, "dairy"));
+        dao.deleteItem(new GroceryItem("milk", 0, "dairy"));
+
+        GroceryList loaded = dao.loadAllItem();
+        assertThat(loaded.getGroceryItemList()).isEmpty();
     }
 
     @Test
-    @Order(4)
-    @DisplayName("Supprime un item existant")
-    void testDeleteExistingItem() {
-        dao.addItem(new Item("Fromage", 1, "Crèmerie"));
-        dao.deleteItem(new Item("Fromage", 1, "Crèmerie"));
+    void should_throwException_whenDeletingNonExistentItem() {
+        Path filePath = tempDir.resolve("grocery.csv");
+        CsvStorageDAO dao = new CsvStorageDAO(filePath.toString());
 
-        List<Item> items = dao.loadAllItem();
-        assertTrue(items.isEmpty());
+        assertThatThrownBy(() -> dao.deleteItem(new GroceryItem("bread", 0, "bakery")))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("n'existe pas");
     }
 
     @Test
-    @Order(5)
-    @DisplayName("Exception si suppression item inexistant")
-    void testDeleteNonExistingItem() {
-        assertThrows(IllegalArgumentException.class, () ->
-                dao.deleteItem(new Item("Yaourt", 1, "Crèmerie"))
-        );
+    void should_addItemList_andLoadThem() {
+        Path filePath = tempDir.resolve("grocery.csv");
+        CsvStorageDAO dao = new CsvStorageDAO(filePath.toString());
+
+        GroceryList list = new GroceryList(new ArrayList<>());
+        list.addToList(new GroceryItem("carrot", 2, "veg"));
+        list.addToList(new GroceryItem("onion", 3, "veg"));
+        dao.addItemList(list);
+
+        GroceryList loaded = dao.loadAllItem();
+        assertThat(loaded.getGroceryItemList()).hasSize(2);
+        assertThat(loaded.getGroceryItemList()).extracting("name")
+                .containsExactlyInAnyOrder("carrot", "onion");
     }
 
     @Test
-    @Order(6)
-    @DisplayName("loadAllItem retourne une liste vide si fichier vide")
-    void testLoadAllItemEmptyFile() {
-        List<Item> items = dao.loadAllItem();
-        assertTrue(items.isEmpty());
+    void should_returnEmptyList_whenFileDoesNotExistOrIsEmpty() throws IOException {
+        Path filePath = tempDir.resolve("empty.csv");
+        Files.createFile(filePath); // create an empty file
+        CsvStorageDAO dao = new CsvStorageDAO(filePath.toString());
+
+        GroceryList loaded = dao.loadAllItem();
+        assertThat(loaded.getGroceryItemList()).isEmpty();
+    }
+
+
+
+    @Test
+    void should_throwRuntimeException_whenAddItemFailsToWriteFile() throws IOException {
+        Path filePath = tempDir.resolve("bad.csv");
+        Files.write(filePath, List.of("invalid header"));
+
+        CsvStorageDAO dao = new CsvStorageDAO(filePath.toString());
+        Files.delete(filePath); // Supprime le fichier après l'initialisation pour provoquer l'erreur à l'écriture
+
+        assertThatThrownBy(() -> dao.addItem(new GroceryItem("fail", 1, "fail")))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("Erreur lors de l'ajout ou de la mise à jour");
+    }
+
+    @Test
+    void should_throwRuntimeException_whenDeleteFailsToAccessFile() {
+        Path filePath = tempDir.resolve("cannotdelete.csv");
+        CsvStorageDAO dao = new CsvStorageDAO(filePath.toString());
+
+        // Supprimer le fichier pour simuler une erreur d'accès
+        filePath.toFile().delete();
+
+        assertThatThrownBy(() -> dao.deleteItem(new GroceryItem("ghost", 0, "missing")))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("n'existe pas");
     }
 }

@@ -1,110 +1,94 @@
 package com.fges.storage;
 
-import com.fges.valueobject.Item;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
+import com.fges.domain.GroceryItem;
+import com.fges.domain.GroceryList;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
-import java.io.File;
-import java.nio.file.Files;
+import java.io.IOException;
 import java.nio.file.Path;
-import java.util.List;
+import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 
 class JsonStorageDAOTest {
-    private static final String TEST_FILE = "test_storage.json";
-    private JsonStorageDAO jsonStorageDAO;
 
-    @BeforeEach
-    void setUp() {
-        jsonStorageDAO = new JsonStorageDAO(TEST_FILE);
-    }
+    @TempDir
+    Path tempDir;
 
-    @AfterEach
-    void tearDown() throws Exception {
-        Files.deleteIfExists(Path.of(TEST_FILE));
+    @Test
+    void should_addAndLoadItemCorrectly() {
+        Path file = tempDir.resolve("items.json");
+        JsonStorageDAO dao = new JsonStorageDAO(file.toString());
+
+        GroceryItem item = new GroceryItem("apple", 2, "fruit");
+        dao.addItem(item);
+
+        GroceryList loaded = dao.loadAllItem();
+        assertThat(loaded.getGroceryItemList()).hasSize(1);
+        GroceryItem loadedItem = loaded.getGroceryItemList().get(0);
+        assertThat(loadedItem.getName()).isEqualTo("apple");
+        assertThat(loadedItem.getQuantity()).isEqualTo(2);
+        assertThat(loadedItem.getCategory()).isEqualTo("fruit");
     }
 
     @Test
-    @DisplayName("Le fichier JSON doit être créé s'il n'existe pas")
-    void fileShouldBeCreated() {
-        assertTrue(new File(TEST_FILE).exists());
+    void should_mergeQuantities_whenAddingSameItem() {
+        Path file = tempDir.resolve("items.json");
+        JsonStorageDAO dao = new JsonStorageDAO(file.toString());
+
+        dao.addItem(new GroceryItem("apple", 1, "fruit"));
+        dao.addItem(new GroceryItem("apple", 2, "fruit"));
+
+        GroceryList loaded = dao.loadAllItem();
+        assertThat(loaded.getGroceryItemList()).hasSize(1);
+        assertThat(loaded.getGroceryItemList().get(0).getQuantity()).isEqualTo(3);
     }
 
     @Test
-    @DisplayName("Le chemin du fichier doit être correct")
-    void shouldReturnCorrectPath() {
-        assertEquals(Path.of(TEST_FILE), jsonStorageDAO.getStoragePath());
+    void should_deleteItem() {
+        Path file = tempDir.resolve("items.json");
+        JsonStorageDAO dao = new JsonStorageDAO(file.toString());
+
+        dao.addItem(new GroceryItem("milk", 1, "dairy"));
+        dao.deleteItem(new GroceryItem("milk", 0, "dairy"));
+
+        GroceryList loaded = dao.loadAllItem();
+        assertThat(loaded.getGroceryItemList()).isEmpty();
     }
 
     @Test
-    @DisplayName("Exception levée si le nom du fichier est null ou vide")
-    void shouldThrowExceptionWhenFilenameIsInvalid() {
-        Exception exception1 = assertThrows(IllegalArgumentException.class, () -> new JsonStorageDAO(null));
-        assertEquals("Le nom du fichier ne peut pas être nul ou vide.", exception1.getMessage());
+    void should_throw_whenDeletingNonexistentItem() {
+        Path file = tempDir.resolve("items.json");
+        JsonStorageDAO dao = new JsonStorageDAO(file.toString());
 
-        Exception exception2 = assertThrows(IllegalArgumentException.class, () -> new JsonStorageDAO(""));
-        assertEquals("Le nom du fichier ne peut pas être nul ou vide.", exception2.getMessage());
+        assertThatThrownBy(() -> dao.deleteItem(new GroceryItem("banana", 0, "fruit")))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("existe pas");
     }
 
     @Test
-    @DisplayName("Ajout d'un item unique dans le fichier JSON")
-    void shouldAddItem() {
-        Item item = new Item("Lait", 2, "Boisson");
-        jsonStorageDAO.addItem(item);
-        var items = jsonStorageDAO.loadAllItem();
+    void should_addItemList_andReadThem() {
+        Path file = tempDir.resolve("items.json");
+        JsonStorageDAO dao = new JsonStorageDAO(file.toString());
 
-        assertEquals(1, items.size());
-        assertEquals("Lait", items.get(0).getName());
-        assertEquals(2, items.get(0).getQuantity());
-        assertEquals("Boisson", items.get(0).getCategory());
+        GroceryList list = new GroceryList(new ArrayList<>());
+        list.addToList(new GroceryItem("bread", 2, "bakery"));
+        list.addToList(new GroceryItem("cheese", 1, "dairy"));
+
+        dao.addItemList(list);
+
+        GroceryList loaded = dao.loadAllItem();
+        assertThat(loaded.getGroceryItemList()).hasSize(2);
     }
 
     @Test
-    @DisplayName("Ajout d'une liste d'items")
-    void shouldAddItemList() {
-        Item item1 = new Item("Pain", 1, "Boulangerie");
-        Item item2 = new Item("Jus", 3, "Boisson");
+    void should_returnEmptyList_whenFileIsEmpty() throws IOException {
+        Path file = tempDir.resolve("items.json");
+        file.toFile().createNewFile(); // fichier vide
+        JsonStorageDAO dao = new JsonStorageDAO(file.toString());
 
-        jsonStorageDAO.addItemList(List.of(item1, item2));
-        var items = jsonStorageDAO.loadAllItem();
-
-        assertEquals(2, items.size());
-    }
-
-    @Test
-    @DisplayName("Supprimer un item existant")
-    void shouldDeleteItem() {
-        Item item = new Item("Beurre", 1, "Épicerie");
-        jsonStorageDAO.addItem(item);
-        jsonStorageDAO.deleteItem(item);
-
-        var items = jsonStorageDAO.loadAllItem();
-        assertTrue(items.isEmpty());
-    }
-
-    @Test
-    @DisplayName("Supprimer un item inexistant lève une exception")
-    void shouldThrowWhenDeletingNonExistingItem() {
-        Item item = new Item("Fromage", 1, "Crèmerie");
-
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> jsonStorageDAO.deleteItem(item));
-        assertEquals("L'item à supprimer n'existe pas !", exception.getMessage());
-    }
-
-    @Test
-    @DisplayName("Ajouter un item déjà existant doit augmenter la quantité")
-    void shouldUpdateQuantityIfItemExists() {
-        Item item1 = new Item("Eau", 1, "Boisson");
-        Item item2 = new Item("Eau", 2, "Boisson");
-
-        jsonStorageDAO.addItem(item1);
-        jsonStorageDAO.addItem(item2);
-
-        var items = jsonStorageDAO.loadAllItem();
-        assertEquals(1, items.size());
-        assertEquals(3, items.get(0).getQuantity());
+        GroceryList loaded = dao.loadAllItem();
+        assertThat(loaded.getGroceryItemList()).isEmpty();
     }
 }

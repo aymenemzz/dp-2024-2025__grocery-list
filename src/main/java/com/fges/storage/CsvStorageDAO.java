@@ -1,7 +1,8 @@
 package com.fges.storage;
 
-import com.fges.storage.dao.GenericDAO;
-import com.fges.valueobject.Item;
+import com.fges.application.port.out.GroceryDAO;
+import com.fges.domain.GroceryItem;
+import com.fges.domain.GroceryList;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -11,9 +12,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-public class CsvStorageDAO implements GenericDAO {
+public class CsvStorageDAO implements GroceryDAO {
     private final Path storagePath;
 
     public CsvStorageDAO(String filename) {
@@ -34,7 +34,7 @@ public class CsvStorageDAO implements GenericDAO {
     }
 
     @Override
-    public void addItem(Item item) {
+    public void addItem(GroceryItem groceryItem) {
         try {
             List<String> lines = Files.readAllLines(storagePath);
             List<String> updatedLines = new ArrayList<>();
@@ -49,8 +49,10 @@ public class CsvStorageDAO implements GenericDAO {
 
             for (int i = 1; i < lines.size(); i++) {
                 String[] parts = lines.get(i).split(",");
-                if (parts.length >= 3 && parts[0].equals(item.getName()) && parts[2].equals(item.getCategory())) {
-                    int newQuantity = Integer.parseInt(parts[1]) + item.getQuantity();
+                if (parts.length >= 3
+                        && parts[0].trim().equals(groceryItem.getName().trim())
+                        && parts[2].trim().equals(groceryItem.getCategory().trim())) {
+                    int newQuantity = Integer.parseInt(parts[1]) + groceryItem.getQuantity();
                     updatedLines.add(parts[0] + "," + newQuantity + "," + parts[2]);
                     itemUpdated = true;
                 } else {
@@ -59,7 +61,7 @@ public class CsvStorageDAO implements GenericDAO {
             }
 
             if (!itemUpdated) {
-                updatedLines.add(item.getName() + "," + item.getQuantity() + "," + item.getCategory());
+                updatedLines.add(groceryItem.getName() + "," + groceryItem.getQuantity() + "," + groceryItem.getCategory());
             }
 
             Files.write(storagePath, updatedLines);
@@ -69,10 +71,10 @@ public class CsvStorageDAO implements GenericDAO {
     }
 
     @Override
-    public void addItemList(List<Item> itemList) {
+    public void addItemList(GroceryList groceryList) {
         try (FileWriter writer = new FileWriter(storagePath.toFile(), true)) {
-            for (Item item : itemList) {
-                writer.append(item.getName()).append(",").append(String.valueOf(item.getQuantity())).append(",").append(item.getCategory()).append("\n");
+            for (GroceryItem groceryItem : groceryList.getGroceryItemList()) {
+                writer.append(groceryItem.getName()).append(",").append(String.valueOf(groceryItem.getQuantity())).append(",").append(groceryItem.getCategory()).append("\n");
             }
         } catch (IOException e) {
             throw new RuntimeException("Erreur lors de l'écriture de la liste d'items dans le fichier CSV", e);
@@ -80,26 +82,28 @@ public class CsvStorageDAO implements GenericDAO {
     }
 
     @Override
-    public List<Item> loadAllItem() {
+    public GroceryList loadAllItem() {
         if (!Files.exists(storagePath) || storagePath.toFile().length() == 0) {
-            return new ArrayList<>();
+            return new GroceryList(new ArrayList<>());
         }
 
         try {
-            return Files.lines(storagePath)
+            GroceryList groceryList = new GroceryList(new ArrayList<>());
+            Files.lines(storagePath)
                     .skip(1) // Ignorer l'en-tête
                     .map(line -> {
                         String[] parts = line.split(",");
-                        return new Item(parts[0], Integer.parseInt(parts[1]), parts[2]);
+                        return new GroceryItem(parts[0], Integer.parseInt(parts[1]), parts[2]);
                     })
-                    .collect(Collectors.toList());
+                    .forEach(groceryList::addToList);
+            return groceryList;
         } catch (IOException e) {
             throw new RuntimeException("Erreur lors de la lecture du fichier CSV", e);
         }
     }
 
     @Override
-    public void deleteItem(Item item) {
+    public void deleteItem(GroceryItem groceryItem) {
         if (!Files.exists(storagePath)) {
             throw new RuntimeException("Le fichier CSV n'existe pas.");
         }
@@ -112,7 +116,7 @@ public class CsvStorageDAO implements GenericDAO {
             boolean removed = false;
             for (int i = 1; i < lines.size(); i++) {
                 String[] parts = lines.get(i).split(",");
-                if (parts[0].equals(item.getName())) {
+                if (parts[0].trim().equals(groceryItem.getName().trim())) {
                     removed = true;
                     continue;
                 }
