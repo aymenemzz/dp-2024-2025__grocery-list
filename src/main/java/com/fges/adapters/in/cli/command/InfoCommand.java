@@ -1,6 +1,6 @@
 package com.fges.adapters.in.cli.command;
 
-import com.fges.valueobject.SystemInfo;
+import com.fges.domain.SystemInfo;
 
 public class InfoCommand implements Command{
 

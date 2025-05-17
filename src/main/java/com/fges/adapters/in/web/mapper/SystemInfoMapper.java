@@ -1,6 +1,6 @@
 package com.fges.adapters.in.web.mapper;
 
-import com.fges.valueobject.SystemInfo;
+import com.fges.domain.SystemInfo;
 import fr.anthonyquere.MyGroceryShop.Runtime;
 
 public class SystemInfoMapper {

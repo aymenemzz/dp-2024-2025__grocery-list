@@ -1,6 +1,5 @@
-package com.fges.valueobject;
+package com.fges.domain;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import java.time.LocalDate;
